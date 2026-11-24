@@ -1,0 +1,68 @@
+# SFT demo — Qwen3-4B LoRA on a small slice of UltraChat 200K, with Halo.
+# Based on Halo's own example (examples/sft/qwen3/qwen3-4b-ultrachat-lora.yaml),
+# scaled down so the run finishes in under an hour on a single 16 GB GPU:
+#   - dataset_ratio 0.005 keeps ~1,000 of the 200k training rows
+#   - max_length 1024, max_steps 30, LoRA r=16
+#   - attn_implementation sdpa (no FlashAttention on a T4)
+#   - fp16, not bf16: the T4 has no bf16 tensor cores, and bf16 training
+#     fails on it; fp16 is the working precision on this hardware
+# Launch: python <halo-repo>/scripts/training/sft.py configs/sft-qwen3-4b-ultrachat-lora-demo.yaml
+#   or: halo launch sft configs/sft-qwen3-4b-ultrachat-lora-demo.yaml
+# Halo version pinned in HALO_VERSION.md. Requires Halo's Docker image or an
+# equivalent Python 3.12 environment (see README).
+
+# --- Model ---
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+
+# --- Dataset ---
+dataset:
+- HuggingFaceH4/ultrachat_200k@train_sft
+dataset_ratio: 0.005
+conversation_field: messages
+assistant_message_template: "<|im_start|>assistant\n"
+test_size: 0.01
+
+# --- LoRA ---
+use_peft: true
+lora_r: 16
+lora_alpha: 32
+lora_target_modules:
+- q_proj
+- k_proj
+- v_proj
+- o_proj
+- gate_proj
+- up_proj
+- down_proj
+
+# --- Training ---
+per_device_train_batch_size: 2
+per_device_eval_batch_size: 2
+max_steps: 30
+gradient_accumulation_steps: 4
+gradient_checkpointing: true
+learning_rate: 1.0e-04
+lr_scheduler_type: cosine
+warmup_steps: 5
+fp16: true
+
+# --- Attention & packing ---
+attn_implementation: sdpa
+max_length: 1024
+packing: true
+
+# --- Output ---
+output_dir: checkpoints/sft-qwen3-4b-ultrachat-lora-demo
+eval_strategy: "no"
+save_strategy: steps
+save_steps: 30
+save_total_limit: 1
+save_only_model: true
+
+# --- Logging ---
+logging_steps: 1
+logging_first_step: true
+report_to: []
+
+# --- Data ---
+dataloader_num_workers: 2
