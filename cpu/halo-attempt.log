@@ -1,0 +1,259 @@
+/home/hatch/workspace/halo-sft-demo-work/cpu-venv/lib/python3.12/site-packages/fla/utils.py:420: UserWarning: Triton is not supported on current platform, roll back to CPU.
+  warnings.warn(('Triton is not supported on current platform, roll back to CPU.'), stacklevel=1)
+[INFO|training_args.py:1809] 2026-11-24 20:03:09,137 >> PyTorch: setting up devices
+11/24/2026 20:03:09 - INFO - halo.runtime.filesystem - Shared-filesystem scope: {'DIST_SHARED_FILESYSTEM': 'shared', 'DIST_INPUT_SHARED_FILESYSTEM': 'shared', 'DIST_OUTPUT_SHARED_FILESYSTEM': 'shared'} (set DIST_SHARED_FILESYSTEM=0 for per-node local storage).
+[INFO|hub.py:454] 2026-11-24 20:03:09,141 >> Offline mode: forcing local_files_only=True
+[INFO|configuration_utils.py:1016] 2026-11-24 20:03:09,141 >> loading configuration file /home/hatch/workspace/halo-sft-demo-work/cpu-run/tiny-qwen3/config.json
+[INFO|configuration_utils.py:1090] 2026-11-24 20:03:09,143 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": null,
+  "dtype": "float32",
+  "eos_token_id": null,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 128,
+  "initializer_range": 0.02,
+  "intermediate_size": 384,
+  "layer_types": [
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 1024,
+  "max_window_layers": 28,
+  "model_type": "qwen3",
+  "num_attention_heads": 4,
+  "num_hidden_layers": 2,
+  "num_key_value_heads": 2,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 10000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.20.2",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+11/24/2026 20:03:09 - INFO - halo.distributed.parallelism_config - ============================================================
+PARALLELISM: DATA PARALLEL
+  World: 1 (1 nodes × 1 GPUs)
+  Data parallel: 1 distinct batches
+  Gradient sync: 1 ranks
+============================================================
+11/24/2026 20:03:09 - INFO - halo.data.pipeline.coordinated_map - [loading dataset /home/hatch/workspace/halo-sft-demo-work/cpu-run/data/tiny-chat.jsonl] Main (rank 0)...
+11/24/2026 20:03:09 - INFO - halo.data.sources.loading - Loading dataset from local file: /home/hatch/workspace/halo-sft-demo-work/cpu-run/data/tiny-chat.jsonl
+
+Generating train split: 0 examples [00:00, ? examples/s]
+Generating train split: 24 examples [00:00, 6696.15 examples/s]
+11/24/2026 20:03:09 - INFO - halo.data.pipeline.coordinated_map - [loading dataset /home/hatch/workspace/halo-sft-demo-work/cpu-run/data/tiny-chat.jsonl] Main (rank 0) completed
+11/24/2026 20:03:09 - INFO - halo.data.pipeline.coordinated_map - [filter operation (filtering empty messages (train))] Main (rank 0)...
+
+filtering empty messages (train):   0%|          | 0/21 [00:00<?, ? examples/s]
+filtering empty messages (train): 100%|██████████| 21/21 [00:00<00:00, 1301.98 examples/s]
+11/24/2026 20:03:09 - INFO - halo.data.pipeline.coordinated_map - [filter operation (filtering empty messages (train))] Main (rank 0) completed
+11/24/2026 20:03:09 - INFO - halo.data.pipeline.coordinated_map - [filter operation (filtering empty messages (test))] Main (rank 0)...
+
+filtering empty messages (test):   0%|          | 0/3 [00:00<?, ? examples/s]
+filtering empty messages (test): 100%|██████████| 3/3 [00:00<00:00, 603.64 examples/s]
+11/24/2026 20:03:09 - INFO - halo.data.pipeline.coordinated_map - [filter operation (filtering empty messages (test))] Main (rank 0) completed
+11/24/2026 20:03:09 - INFO - halo.data.sources.loading - Training data after schema normalization: 21
+11/24/2026 20:03:09 - INFO - halo.data.sources.loading - Columns in training dataset: ['messages']
+11/24/2026 20:03:09 - INFO - halo.data.sources.loading - Test data after schema normalization: 3
+11/24/2026 20:03:09 - INFO - halo.data.sources.loading - Columns in test dataset: ['messages']
+[INFO|hub.py:454] 2026-11-24 20:03:09,275 >> Offline mode: forcing local_files_only=True
+[INFO|configuration_utils.py:1016] 2026-11-24 20:03:09,275 >> loading configuration file /home/hatch/workspace/halo-sft-demo-work/cpu-run/tiny-qwen3/config.json
+[INFO|configuration_utils.py:1090] 2026-11-24 20:03:09,277 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": null,
+  "dtype": "float32",
+  "eos_token_id": null,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 128,
+  "initializer_range": 0.02,
+  "intermediate_size": 384,
+  "layer_types": [
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 1024,
+  "max_window_layers": 28,
+  "model_type": "qwen3",
+  "num_attention_heads": 4,
+  "num_hidden_layers": 2,
+  "num_key_value_heads": 2,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 10000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.20.2",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|hub.py:454] 2026-11-24 20:03:09,278 >> Offline mode: forcing local_files_only=True
+[INFO|configuration_utils.py:1016] 2026-11-24 20:03:09,278 >> loading configuration file /home/hatch/workspace/halo-sft-demo-work/cpu-run/tiny-qwen3/config.json
+[INFO|configuration_utils.py:1090] 2026-11-24 20:03:09,281 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": null,
+  "dtype": "float32",
+  "eos_token_id": null,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 128,
+  "initializer_range": 0.02,
+  "intermediate_size": 384,
+  "layer_types": [
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 1024,
+  "max_window_layers": 28,
+  "model_type": "qwen3",
+  "num_attention_heads": 4,
+  "num_hidden_layers": 2,
+  "num_key_value_heads": 2,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 10000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.20.2",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+11/24/2026 20:03:09 - INFO - halo.model_loading.liger.dispatch - Applying Liger Kernel for qwen3: {'rope': True, 'cross_entropy': True, 'fused_linear_cross_entropy': False, 'rms_norm': True, 'swiglu': True}
+11/24/2026 20:03:09 - INFO - halo.model_loading.liger.dispatch - ✓ Liger Kernel applied for qwen3
+[INFO|hub.py:454] 2026-11-24 20:03:09,285 >> Offline mode: forcing local_files_only=True
+[INFO|configuration_utils.py:1016] 2026-11-24 20:03:09,286 >> loading configuration file /home/hatch/workspace/halo-sft-demo-work/cpu-run/tiny-qwen3/config.json
+[INFO|configuration_utils.py:1090] 2026-11-24 20:03:09,288 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": null,
+  "dtype": "float32",
+  "eos_token_id": null,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 128,
+  "initializer_range": 0.02,
+  "intermediate_size": 384,
+  "layer_types": [
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 1024,
+  "max_window_layers": 28,
+  "model_type": "qwen3",
+  "num_attention_heads": 4,
+  "num_hidden_layers": 2,
+  "num_key_value_heads": 2,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 10000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.20.2",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|hub.py:454] 2026-11-24 20:03:09,288 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:1597] 2026-11-24 20:03:09,296 >> Offline mode: forcing local_files_only=True
+[INFO|modeling_utils.py:761] 2026-11-24 20:03:10,822 >> loading weights file /home/hatch/workspace/halo-sft-demo-work/cpu-run/tiny-qwen3/model.safetensors
+[INFO|configuration_utils.py:1156] 2026-11-24 20:03:10,824 >> Generate config GenerationConfig {
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "use_cache": true
+}
+
+Traceback (most recent call last):
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/runtime/consensus.py", line 144, in _raise_joined_failure
+    join(f"{type(failure).__name__}: {failure}")
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/runtime/consensus.py", line 387, in <lambda>
+    _raise_joined_failure(failure, lambda reason: store_reject_across_ranks(tag, reason, what))
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/runtime/consensus.py", line 370, in store_reject_across_ranks
+    raise exc_type(local_reason)
+RuntimeError: RuntimeError: Cannot access accelerator device when none is available.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/scripts/training/sft.py", line 484, in <module>
+    with_distributed_teardown(main)()
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/entrypoints/script.py", line 327, in wrapper
+    result = main_fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/scripts/training/sft.py", line 389, in main
+    policy = load_policy_model(
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/entrypoints/model_setup.py", line 470, in load_policy_model
+    model, tokenizer = load_model_and_tokenizer(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/entrypoints/model_setup.py", line 337, in load_model_and_tokenizer
+    model, tokenizer = load_distributed_model(
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/model_loading/parallel/loader.py", line 429, in load_distributed_model
+    model = _dispatch_model_loading(
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/model_loading/parallel/loader.py", line 278, in _dispatch_model_loading
+    return _load_undistributed_model(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/model_loading/parallel/loader.py", line 189, in _load_undistributed_model
+    model = load_whole_model(
+            ^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/model_loading/parallel/whole_model.py", line 73, in load_whole_model
+    model = from_pretrained_verified(model_class, source.name, **from_pretrained_kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/halo/halo/model_loading/checkpoint_coverage.py", line 127, in from_pretrained_verified
+    model, loading_info = model_class.from_pretrained(model_name_or_path, output_loading_info=True, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/cpu-venv/lib/python3.12/site-packages/transformers/models/auto/auto_factory.py", line 411, in from_pretrained
+    return model_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/cpu-venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4353, in from_pretrained
+    loading_info, disk_offload_index = cls._load_pretrained_model(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/cpu-venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4435, in _load_pretrained_model
+    caching_allocator_warmup(model, expanded_device_map, load_config.hf_quantizer)
+  File "/home/hatch/workspace/halo-sft-demo-work/cpu-venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 5057, in caching_allocator_warmup
+    param: torch.device(device) for param, device in expanded_device_map.items() if is_accelerator_device(device)
+                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/halo-sft-demo-work/cpu-venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 5005, in is_accelerator_device
+    return torch.device(device).type not in ["meta", "cpu"]
+           ^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Cannot access accelerator device when none is available.
+HALO_EXIT=1

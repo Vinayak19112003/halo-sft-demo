@@ -1,0 +1,50 @@
+# Tiny CPU SFT demo — Halo's SFT trainer on a randomly initialised ~20M
+# Qwen3 (hidden 128, 2 layers) and 24 hand-written chat examples.
+# This is NOT the GPU demo in configs/sft-qwen3-4b-ultrachat-lora-demo.yaml:
+# that one needs a GPU (Qwen3-4B LoRA on UltraChat). This config exists so
+# the repo has a real, reproducible training run on CPU hardware.
+# Launch: <cpu-venv>/bin/python <halo-repo>/scripts/training/sft.py \
+#   cpu/sft-tiny-cpu.yaml
+# Halo version pinned in HALO_VERSION.md.
+
+# --- Model (local, random-init tiny Qwen3) ---
+model_name_or_path: /home/hatch/workspace/halo-sft-demo-work/cpu-run/tiny-qwen3
+
+# --- Dataset (local, 24 chat examples) ---
+dataset: /home/hatch/workspace/halo-sft-demo-work/cpu-run/data/tiny-chat.jsonl
+conversation_field: messages
+assistant_message_template: "<|im_start|>assistant\n"
+test_size: 0.1
+
+# --- Training (full fine-tune; the model is only ~20M params) ---
+# CPU run: Halo/TRL default to bf16, which transformers refuses without a
+# GPU, so force CPU + fp32 explicitly.
+use_cpu: true
+bf16: false
+fp16: false
+per_device_train_batch_size: 2
+per_device_eval_batch_size: 2
+max_steps: 12
+gradient_accumulation_steps: 1
+gradient_checkpointing: false
+learning_rate: 5.0e-04
+lr_scheduler_type: cosine
+warmup_steps: 2
+
+# --- Attention & packing ---
+attn_implementation: sdpa
+max_length: 256
+packing: false
+
+# --- Output ---
+output_dir: /home/hatch/workspace/halo-sft-demo-work/cpu-run/outputs/tiny-sft
+eval_strategy: "no"
+save_strategy: "no"
+
+# --- Logging ---
+logging_steps: 1
+logging_first_step: true
+report_to: []
+
+# --- Data ---
+dataloader_num_workers: 0
