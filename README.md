@@ -8,12 +8,43 @@ open-source post-training framework — built as a demo for the
 
 - **GPU demo — Qwen3-4B LoRA on UltraChat** (the real Halo run): config ready in
   [`configs/`](configs/sft-qwen3-4b-ultrachat-lora-demo.yaml), Kaggle GPU run
-  submitted 24 Nov and still **queued** at last check. Its results will go to
+  submitted 24 Nov and still **queued** at last check (25 Nov). Its results will go to
   `results-gpu.json` and `checkpoints/` when it lands.
+- **CPU demo — real Qwen3-0.6B LoRA: done** (25 Nov 2026, see below). A real
+  pretrained model, real tokenizer, 100 chat examples. It ran with plain TRL,
+  **not** Halo — Halo's SFT trainer needs a GPU and could not run on this
+  CPU-only box. The numbers are real and from the log in this repo.
 - **CPU demo — tiny Qwen3 on 24 chat examples: done** (25 Nov 2026, see below).
-  It ran with plain TRL, **not** Halo — Halo's SFT trainer needs a GPU and
-  could not run on this CPU-only box (details below). The numbers are real
-  and from the log in this repo.
+  Also plain TRL, not Halo (same reason). Random-init smoke test.
+
+## Results — Qwen3-0.6B LoRA run (real, 25 Nov 2026)
+
+Runner: **TRL `SFTTrainer` + LoRA, CPU — not Halo.** Weights downloaded from
+Hugging Face [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B)
+(311 tensors, bf16, 0.60B params; 752M including tied embeddings). A 3-step
+trial first confirmed it fits (peak RSS 2.11 GB, ~27s/step); the full run
+below is 12 steps.
+
+| | |
+|---|---|
+| Model | Qwen3-0.6B pretrained, bf16, LoRA r=8 alpha=16 (5.05M trainable, 0.85%), real Qwen3 tokenizer |
+| Data | 100 chat examples, 97 train / 3 eval: 24 hand-written + 76 from public `tatsu-lab/alpaca` ([`cpu/sft-0.6b.jsonl`](cpu/sft-0.6b.jsonl)) |
+| Training | 12 steps, batch 1 x grad-accum 2, lr 2e-4 cosine, warmup 2, max_length 256, grad checkpointing, AdamW on LoRA params only, loss on assistant tokens only |
+| Loss, step 1 → step 12 | **2.36 → 0.85** (train avg 1.64; noisy step-to-step because batches vary, clear downward trend — steps 6–12 mostly under 1.4) |
+| Eval loss (3 held-out rows) | **1.02** (was 1.83 after 3 steps); eval mean token accuracy 0.79 |
+| Time | 332s training, 344s total (~27s/step) |
+| Hardware | CPU, 4 cores, 7.9 GB RAM, peak RSS 2.70 GB; torch 2.11.0+cpu, transformers 5.20.2, trl 1.14.2, peft 0.18.1 |
+
+This is a real pretrained model learning: eval loss fell from 1.83 to 1.02
+over the run, and token accuracy rose to 0.79. It is still a small demo
+(0.25 epoch, 12 steps, no checkpoint saved) — it proves Vinayak can run a
+real SFT pipeline end to end, not that the model is useful. No checkpoint
+was saved (`save_strategy: no`); the deliverable is the log and the numbers.
+
+Full numbers: [`results-0.6b.json`](results-0.6b.json). Full console log:
+[`run-0.6b.log`](run-0.6b.log). Training script:
+[`cpu/train_qwen06b_lora.py`](cpu/train_qwen06b_lora.py). Dataset builder:
+[`cpu/prep_alpaca_slice.py`](cpu/prep_alpaca_slice.py).
 
 ## Results — CPU demo run (real, 25 Nov 2026)
 
@@ -65,7 +96,18 @@ FlashAttention 2 does not support the T4's Turing architecture.
 
 ## How to reproduce
 
-### CPU demo (runs anywhere, ~1 minute)
+### CPU demo — Qwen3-0.6B LoRA (real model, ~6 minutes)
+
+```bash
+# weights: download Qwen/Qwen3-0.6B into cpu-run/qwen06b/ (config.json,
+# generation_config.json, model.safetensors + the Qwen3 tokenizer files);
+# dataset: python cpu-run/prep_alpaca_slice.py  (24 hand-written + 76 Alpaca)
+# then, in cpu-venv (torch CPU, transformers, trl, peft, datasets):
+python cpu/train_qwen06b_lora.py --max-steps 12
+# results: results-0.6b.json, log: run-0.6b.log
+```
+
+### CPU demo — tiny Qwen3 (smoke test, ~1 minute)
 
 ```bash
 # in cpu-venv (torch CPU, transformers, trl, datasets) with the tiny model
@@ -94,5 +136,7 @@ Halo version and commit: see [HALO_VERSION.md](HALO_VERSION.md).
 
 - Halo: https://github.com/whitecircle/halo
 - Competition: https://whitecircle.com/halo/competition
-- Base model: https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507
-- Dataset: https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k
+- Base model (GPU demo): https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507
+- Base model (CPU demo): https://huggingface.co/Qwen/Qwen3-0.6B
+- Dataset (GPU demo): https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k
+- Dataset (CPU demo): https://huggingface.co/datasets/tatsu-lab/alpaca
